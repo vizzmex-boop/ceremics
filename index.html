@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--
+========================================
+中国陶瓷发展史 - 首页
+========================================
+
+包含三大核心板块：
+1. 时空流图 (Map + Timeline)
+2. 陶瓷谱系 (Type Analysis)
+3. 制瓷工序 (Craft Process)
+
+技术栈：HTML5, CSS3, ES6, ECharts (v5.4.3)
+设计风格：水墨/新中式
+========================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数绘瓷路 韵传古今</title>
+
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="Pic/icon/Browser_icons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="Pic/icon/Browser_icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="Pic/icon/Browser_icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="Pic/icon/Browser_icons/apple-touch-icon.png">
+    <link rel="manifest" href="Pic/icon/Browser_icons/site.webmanifest">
+
+    <!-- 样式表 -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google 字体：马山正体（标题）+ 思源宋体（正文） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- ECharts 图表库 - 用于地图和数据可视化 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- 顶部导航 -->
+        <nav class="main-nav">
+            <div class="logo" id="site-logo">
+                <img src="Pic/icon/仿国印图标.png" class="logo-icon" alt="印章">
+                <span>数绘瓷路 韵传古今</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="history">时空流图</li>
+                <li data-section="types">陶瓷谱系</li>
+                <li data-section="craft">制瓷工序</li>
+            </ul>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main id="main-content">
+
+            <!-- 板块一：时空分布（历史朝代 + 地图） -->
+            <section id="history-section" class="active-section">
+                <div class="timeline-container">
+                    <div class="timeline-track">
+                        <!-- 时间轴节点将由JS动态生成 -->
+                    </div>
+                </div>
+                <div class="content-display">
+                    <div class="dynasty-info">
+                        <h1 id="dynasty-title">选择一个朝代</h1>
+                        <p id="dynasty-period" class="period-text"></p>
+                        <div id="dynasty-description" class="description-text">
+                            <p>点击左侧时间轴查看不同时期的陶瓷发展历史。</p>
+                        </div>
+                        <div id="dynasty-features" class="features-list">
+                            <!-- 特征列表 -->
+                        </div>
+
+                        <!-- 历史总览图表容器 -->
+                        <div id="overview-charts" class="overview-charts" style="display: none;">
+                            <div id="kiln-bar-chart" class="chart-item"></div>
+                            <div id="ceramic-pie-chart" class="chart-item"></div>
+                        </div>
+                    </div>
+                    <div class="visual-display">
+                        <!-- 地图容器 -->
+                        <div id="map-container" style="width: 100%; height: 100%; min-height: 400px;"></div>
+
+                        <!-- 地图控件 -->
+                        <div class="map-controls">
+                            <div class="control-item">
+                                <label class="switch">
+                                    <input type="checkbox" id="label-toggle">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="control-label">显示名称</span>
+                            </div>
+                            <div id="playback-control" class="control-item" style="display: none;">
+                                <button id="play-history-btn" class="play-btn">
+                                    <span class="play-icon">▶</span> 历史演变演示
+                                </button>
+                            </div>
+                            <div class="control-item">
+                                <button id="show-gallery-btn" class="gallery-btn">
+                                    <span>🏺</span> 文物展示
+                                </button>
+                            </div>
+                            <div id="map-legend" class="map-legend">
+                                <!-- 图例内容由JS生成 -->
+                            </div>
+                        </div>
+                        <div id="fullscreen-close" class="fullscreen-close-btn">&times;</div>
+                    </div>
+                </div>
+                <!-- 文物图集 - 放在地图下方空白区域 -->
+                <div id="dynasty-gallery" class="dynasty-gallery"></div>
+            </section>
+
+            <!-- 陶瓷种类板块 -->
+            <section id="types-section">
+                <div class="s-timeline-container">
+                    <h2 class="section-title">陶瓷谱系大观</h2>
+                    <div class="s-timeline-wrapper">
+                        <svg class="s-curve-svg" width="100%" height="100%">
+                            <path id="s-curve-path" d="" fill="none" stroke="rgba(139, 69, 19, 0.2)" stroke-width="80"
+                                stroke-linecap="round" />
+                        </svg>
+                        <div id="types-content" class="types-content">
+                            <!-- 动态生成种类节点 -->
+                        </div>
+                    </div>
+                    <div id="type-detail-modal" class="type-detail-modal">
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h3 id="modal-type-name"></h3>
+                            <p id="modal-type-period"></p>
+                            <p id="modal-type-desc"></p>
+
+                            <ul id="modal-type-features"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 陶瓷工艺板块 -->
+            <section id="craft-section">
+                <div class="craft-container">
+                    <h2 class="section-title">制瓷工序详解</h2>
+                    <div class="craft-scroll-wrapper">
+                        <div id="craft-steps-container" class="craft-steps-container">
+                            <!-- 动态生成工艺步骤 -->
+                        </div>
+                    </div>
+
+                    <!-- 工艺数据可视化区域 -->
+                    <div class="craft-charts-panel">
+                        <div class="chart-controls">
+                            <h3>工艺数据解密</h3>
+                            <p id="chart-description">点击上方步骤查看相关数据分析</p>
+                        </div>
+                        <div id="craft-chart-container" class="craft-chart"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 作者信息弹窗 -->
+    <div id="author-modal" class="modal">
+        <div class="modal-content author-content">
+            <span class="close-author">&times;</span>
+            <h2>关于作者（排名不分先后）</h2>
+            <div class="author-info">
+                <p><strong>许成泽</strong>&emsp;数字人文学院&emsp;2024级计算机科学与技术3班</p>
+                <p><strong>唐崇燕</strong>&emsp;数字人文学院&emsp;2024级数字人文1班</p>
+                <p><strong>潘凤英</strong>&emsp;数字人文学院&emsp;2024级数字人文1班</p>
+                <p><strong>周　州</strong>&emsp;数字人文学院&emsp;2024级数字人文1班</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
